@@ -85,7 +85,7 @@ unitTest.exec('rm -fr lib/');
 unitTest.exec('tsc --noEmit --project tsconfig.jest.json');
 unitTest.exec('jest ./test/*');
 unitTest.exec(
-  'eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js'
+  'eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js',
 );
 project.release.addBranch('beta', {
   tagPrefix: 'beta',
@@ -96,7 +96,7 @@ project.release.addJobs({
   integration_tests: {
     permissions: { contents: 'write' },
     needs: 'release',
-    steps: {
+    steps: [{
       name: 'Integration tests',
       uses:
         'ammarkarachi/amplify-cli-export-construct/.github/workflows/integration-test.yml',
@@ -107,7 +107,7 @@ project.release.addJobs({
           AWS_SESSION_TOKEN: '${{ secrets.AWS_SESSION_TOKEN }}',
         },
       },
-    },
+    }],
   },
 });
 
