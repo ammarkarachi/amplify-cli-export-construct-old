@@ -16,17 +16,18 @@ const project = new AwsCdkConstructLibrary({
     '@types/node',
     '@types/uuid',
   ],
-  authorOrganization: 'aws',
-  repositoryUrl: 'https://github.com/aws-amplify/amplify-cli-export-construct.git',
+  authorOrganization: true,
+  repositoryUrl:
+    'https://github.com/ammarkarachi/amplify-cli-export-construct.git',
   packageManager: NodePackageManager.NPM,
-  publishToNuget: {
-    dotNetNamespace: 'Amazon.Amplify.CLI.ExportBackend',
-    packageId: 'Amazon.Amplify.CLI.ExportBackend',
-  },
-  publishToPypi: {
-    distName: 'aws-amplify.cli.Export-backend',
-    module: 'aws-amplify.cli.Export_backend',
-  },
+  // publishToNuget: {
+  //   dotNetNamespace: 'Amazon.Amplify.CLI.ExportBackend',
+  //   packageId: 'Amazon.Amplify.CLI.ExportBackend',
+  // },
+  // publishToPypi: {
+  //   distName: 'aws-amplify.cli.Export-backend',
+  //   module: 'aws-amplify.cli.Export_backend',
+  // },
   jest: true,
   cdkDependenciesAsDeps: true,
   minNodeVersion: '14.17.6',
@@ -83,10 +84,35 @@ unitTest.reset();
 unitTest.exec('rm -fr lib/');
 unitTest.exec('tsc --noEmit --project tsconfig.jest.json');
 unitTest.exec('jest ./test/*');
-unitTest.exec('eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js');
+unitTest.exec(
+  'eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js'
+);
 project.release.addBranch('beta', {
   tagPrefix: 'beta',
   majorVersion: '0',
 });
-project.synth();
 
+project.release.addJobs({
+  integration_tests: {
+    permissions: { contents: 'write' },
+    needs: 'release',
+    steps: {
+      name: 'Integration tests',
+      uses:
+        'ammarkarachi/amplify-cli-export-construct/.github/workflows/integration-test.yml',
+      with: {
+        secrets: {
+          AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
+          AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
+          AWS_SESSION_TOKEN: '${{ secrets.AWS_SESSION_TOKEN }}',
+        },
+      },
+    },
+  },
+});
+
+const publishJobs = project.release.publisher.jobs;
+Object.keys(project.release.publisher.jobs).forEach((r) => {
+  publishJobs[r].needs = ['integration_tests'];
+});
+project.synth();
