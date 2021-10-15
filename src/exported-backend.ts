@@ -47,7 +47,7 @@ export interface IAmplifyExportedBackend {
 
   /**
    * Use this to get rest api stack from the backend
-   * 
+   *
    * @param resourceName
    * @return {IAPIRestIncludedStack} the nested of type Rest API
    * @throws {AmplifyCategoryNotFoundError} if the API Rest stack doesn't exist
