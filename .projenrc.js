@@ -99,7 +99,7 @@ project.release.addJobs({
     steps: [{
       name: 'Integration tests',
       uses:
-        'ammarkarachi/amplify-cli-export-construct/.github/workflows/integration-test.yml',
+        'ammarkarachi/amplify-cli-export-construct/.github/workflows/integration-test.yml@main',
       with: {
         secrets: {
           AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}',
