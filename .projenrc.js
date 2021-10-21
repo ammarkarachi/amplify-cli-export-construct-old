@@ -157,7 +157,9 @@ const integrationTestJob = {
 project.release.addJobs(integrationTestJob);
 fs.writeFileSync('./.github/workflows/integration-test.yml', stringify({
   name: 'Integration Tests',
-  workflow_dispatch: {},
+  on: {
+    workflow_dispatch: {},
+  },
   jobs: {
     integTest: {
       'permissions': {
