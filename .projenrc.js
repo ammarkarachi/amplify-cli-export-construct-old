@@ -109,7 +109,7 @@ const integrationTestJob = {
         uses: 'actions/checkout@v2',
         with: {
           ref: 'main',
-          repository: 'ammarkarachi/amplify-cli-export-backend',
+          repository: 'ammarkarachi/amplify-cli-export-construct',
           path: 'amplify-cli-export-construct',
         },
       },
